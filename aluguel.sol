@@ -1,6 +1,6 @@
-pragma solidity 0.5.8;
+pragma solidity 0.5.12;
 
-//aprendendo e tals
+//Um contrato de aluguel
 
 contract Aluguel {
     string public locatario;
@@ -30,5 +30,10 @@ contract Aluguel {
         
         return valorMulta;
     }
-
+    
+    function reajustaAluguel(uint256 percentualReajuste) public {
+    uint256 valordoAcrescimo =0;
+    valordoAcrescimo = ((valor*percentualReajuste)/100);
+    valor = valor + valordoAcrescimo;
+    }
 }
