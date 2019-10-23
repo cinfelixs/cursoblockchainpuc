@@ -1,0 +1,16 @@
+Smart contracts em Blockchain - 22/10/2019
+Tema: Tokens
+Definição: smart contract com cláusulas específicas; é o padrão de smart contracts em ethereum mais utilizado do mundo
+Tópicos:
+- Herança de contratos
+- Autodestruição - fim do sc
+
+Qualquer um pode encaminhar propostas de melhoria para o ethereum (ERC - ethereum requests for comments)
+Necessidade de padronização da interface dos tokens
+Interface: funções e campos que devem existir nos smart contracts
+- São nomeados sob o número do ERC 20
+- Todos os tokens são nomeados e possuem uma sigla (symbol)
+- Padrão adotado pelo mercado!!!
+- Questão: qual é o lastro? Mercado Bitcoin: fração de precatório
+
+Os sc podem herdar a interface de outros sc!!
