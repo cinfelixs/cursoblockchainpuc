@@ -1,0 +1,16 @@
+h1 {
+    color: blue;
+    font-weight: bold;
+}
+
+h3 {
+    color: teal;
+}
+
+#tituloform {
+    font-style: oblique;
+}
+
+#subtituloform {
+    font-style: italic;
+}
