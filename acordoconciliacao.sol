@@ -1,63 +1,72 @@
 pragma solidity 0.5.12;
 
-// Um modelo de termo de audiência de conciliação COM acordo entre as partes
+// Este SC simula um acordo de conciliação de processo de execução de título judicial
 
-contract Acordoconciliacao {
+contract AcordoConciliacao {
     
-    //Descrever as variáveis utilizadas em todas as funções
+    address payable public autor;
+    address payable public advogadoAutor;
+    address public juizConciliador;
+    uint public valorAcordo;
+    uint public dataVencimentoParcela;
+    uint public percentualPgtoAVista;
+    uint public percentualAdvogadoAutor;
+    uint public valorDevidoAutor;
+    bool public pago;
+    bool public retirado;
     
-    string public requerente;
-    string public advRequerente;
-    string public requerido;
-    string public advRequerido;
-    uint256 private valor;
-    uint256 private numeroMaximoDeParcelasAcordo = 6;
+    event pagamentoRealizado (uint valor);
+    
+    modifier autorizadosRecebimento () {
+        require (msg.sender == autor || msg.sender == advogadoAutor, "Operaçao exclusiva do advogado da parte autora");
+        _;    
+    }
+    
+    modifier homologacaoJuiz () {
+        require (msg.sender == juizConciliador, "Homologação do Juiz Presidente do Gabinete de Conciliação");
+        _;
+    }
     
     constructor(
-        string memory parteRequerente,
-        string memory parteRequerida,
-        uint256 valorInicial)
-    
-    public 
-    {
-        requerente = parteRequerente;
-        requerido = parteRequerida;
-        valor = valorInicial;
-    }
-
-    function valorInicial() public view returns (uint256) 
-    {
-            return valor;
-    }
-    
-    function simulaAcordo(uint256 valorParcelasAcordo, uint256 percentualDesconto) public view returns (uint256 valorDoAcordo) {
-        percentualDesconto = 10;
-        valorParcelasAcordo = ((valor*percentualDesconto)/100)/numeroMaximoDeParcelasAcordo;
-        valorDoAcordo = percentualDesconto*valorParcelasAcordo;
-        return valorDoAcordo;
+        address payable _autor,
+        address _juizConciliador,
+        uint _valorDoAcordo,
+        uint _dataVencimentoParcela,
+        uint _percentualAdvogadoAutor
+    ) public {
+        autor = _autor;
+        advogadoAutor = msg.sender;
+        juizConciliador = _juizConciliador;
+        valorAcordo = _valorDoAcordo;
+        dataVencimentoParcela = now+_dataVencimentoParcela;
+        percentualAdvogadoAutor = _percentualAdvogadoAutor;
+        percentualPgtoAVista = 10;
     }
     
-    function descontoMaior(uint256 percentualDescontoMaior) public {
-        if (numeroMaximoDeParcelasAcordo < 3) {
-            percentualDescontoMaior = 20;
-        }
+    function saldoAcordo() public view returns (uint) {
+        return address(this).balance;
+    }
+    
+    function simulacaoDesconto (uint256 valorAcordo, uint256 percentualDescontoAVista) public view returns (uint valorSimuladoDesconto) {
+        valorSimuladoDesconto = (valorAcordo - ((valorAcordo*10)/100),
+        return valorSimuladoDesconto;
+    }
+    
+    function pagamentoParcelado () public payable homologacaoJuiz {
+        require (now <= dataVencimentoParcela, "Aguardando pagamento da parcela");
+        require (msg.value == valorAcordo, "Valor diverso do indicado no acordo");
+        pago = true;
+        emit pagamentoRealizado(msg.value);
+    }
+    
+     function distribuicaoDeValores() public autorizadosRecebimento {
+        require(pago, "Pagamento não realizado");
+        require(retirado == false, "Distribuição já realizada.");
         
-    //TERMINAR A PARTIR DESSE PONTO. O RESTO ESTÁ OK!!!!
-    
-        uint256 valordoAcrescimo = 0;
-        valordoAcrescimo = ((valor*percentualDescontoMaior)/100);
-        valor = valor + valordoAcrescimo;
-    }
-    
-    function aditamentoValorAluguel(uint256 valorCerto) public {
-        valor = valorCerto;
-    }
-    
-    function aplicaMulta(uint256 mesesRestantes, uint256 percentual) public {
+        valorDevidoAutor = (percentualAdvogadoAutor - address(this).balance);
         
-        require(mesesRestantes<30, "Período de contrato inválido");
-        for (uint i=1; i<mesesRestantes; i++) {
-            valor = valor+((valor*percentual)/100);
-            }
+        autor.transfer(valorDevidoAutor);
+        advogadoAutor.transfer(address(this).balance);
+        retirado = true;
     }
 }
