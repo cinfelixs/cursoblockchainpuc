@@ -1,0 +1,24 @@
+h1 {
+    color: palevioletred;
+    font-weight: bold;
+}
+
+h3 {
+    color: rgb(178, 124, 194);
+}
+
+#tituloform {
+    font-style: oblique;
+}
+
+#subtituloform {
+    font-style: italic;
+}
+
+.esverdeado {
+    background-color: rgb(197, 228, 236);
+}
+
+body {
+    background-image: url("../imagens/fundo.jpg");
+}
